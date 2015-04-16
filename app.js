@@ -45,12 +45,12 @@ try {
                 if (loc.id) {
                     // Create a constraint on Location's ID
                     db.constraints.uniqueness.createIfNone("Location", "id", function(err, constraint) {
-                        console.info("Constraint created for: " + constraint);
+                        console.info("Constraint created/updated for: " + constraint);
                     });
 
                     // Create/update Location node for this ID
                     db.save(loc, "Location", function(err, node) {
-                        console.info("Node created: " + node);
+                        console.info("Node created/updated: " + node);
                     });
                 }
             });
