@@ -1,0 +1,24 @@
+{
+    "name": "json-to-neo4j",
+    "version": "0.0.1",
+    "description": "JSON-to-Neo4J importer",
+    "repository" : {
+      "type" : "git",
+      "url" : "https://github.com/mikkopiu/json-to-neo4j.git"
+    },
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "node.js",
+        "neo4j",
+        "json",
+        "import"
+    ],
+    "author": "Mikko Piuhola",
+    "license": "MIT",
+    "dependencies": {
+        "seraph": "0.11.2"
+    }
+}
