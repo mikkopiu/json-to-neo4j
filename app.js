@@ -34,19 +34,44 @@ try {
             // Run through all locations in JSON
             json.locations.forEach(function(location, index, arr) {
                 location.data.Temperature.timeValuePairs.forEach(function(pair, index) {
+
+                    // We want the location's information embedded into the Temperature node
                     var weather = pair;
                     weather.geoid = location.info.geoid;
                     weather.wmo = location.info.wmo;
                     weather.location_name = location.info.name;
                     weather.region = location.info.region;
 
-                    db.save(weather, "Temperature", function(err, node) {
-                        if(err) {
+                    // Create the basic Temperature node
+                    var saveNode = db.save(weather, "Temperature", function(err, node) {
+                        if (err) {
                             console.error("Error in adding Weather node!");
                             console.error(err);
+                        } else {
+                          console.log("Created node: " + node);
                         }
+                    });
 
-                        console.log("Created node: " + node);
+                    // Get datetime from the time-value-pair
+                    var parsedDatetime = new Date(pair.time);
+                    var dateQuery = 'MATCH (h:Hour)-[:IN_DAY]->(d:Day)' +
+                                    '-[:IN_MONTH]->(m:Month)' +
+                                    '-[:IN_YEAR]->(y:Year)' +
+                                    ' WHERE h.hour = "'parseDateTime.getHours().length == 2 ? parsedDateTime.getHours() : "0" + parsedDateTime.getHours()'"' +
+                                    ' AND d.day = "'parseDateTime.getDay().length == 2 ? parsedDateTime.getDay() : "0" + parsedDateTime.getDay()'"' +
+                                    ' AND m.month = "'parseDateTime.getKuukausi'"' +
+                                    ' AND y.year = "'parseDateTime.getVuosi'"' +
+                                    ' RETURN h,d,m,y' +
+                                    ' LIMIT 25';
+
+                    // Create a relationship to the time the temperature was recorded
+                    db.relate(savedNode, "IN_HOUR", "tuntiNode", function(err, relation) {
+                        if (err) {
+                          console.error("Error in creating relationship IN_HOUR!");
+                          console.error(err);
+                        } else {
+                          console.log("Created relationship: " + relation);
+                        }
                     });
                 });
             });
