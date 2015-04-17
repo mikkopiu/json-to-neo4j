@@ -33,14 +33,14 @@ try {
 
             // Run through all locations in JSON
             json.locations.forEach(function(location, index, arr) {
-                location.data.timeValuePairs.forEach(function(pair, index) {
+                location.data.Temperature.timeValuePairs.forEach(function(pair, index) {
                     var weather = pair;
                     weather.geoid = location.info.geoid;
                     weather.wmo = location.info.wmo;
                     weather.location_name = location.info.name;
                     weather.region = location.info.region;
 
-                    db.save(weather, "Weather", function(err, node) {
+                    db.save(weather, "Temperature", function(err, node) {
                         if(err) {
                             console.error("Error in adding Weather node!");
                             console.error(err);
