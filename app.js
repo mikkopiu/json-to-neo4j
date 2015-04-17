@@ -7,12 +7,15 @@ var RELATIVE_FILE_LOCATION = process.argv[2];
 // Database settings
 var DB_URL = "http://localhost";
 var DB_PORT = "7474";
+var DB_USER = "neo4j";
+var DB_PASS = "asd123";
 
 // Create DB connection
-var db = seraph(
-    process.env["NEO4J_URL"] ||
-    DB_URL + ":" + DB_PORT
-);
+var db = seraph({
+    server: DB_URL + ":" + DB_PORT,
+    user: DB_USER,
+    pass: DB_PASS
+});
 
 var json;
 
@@ -30,29 +33,22 @@ try {
 
             // Run through all locations in JSON
             json.locations.forEach(function(location, index, arr) {
+                location.data.timeValuePairs.forEach(function(pair, index) {
+                    var weather = pair;
+                    weather.geoid = location.info.geoid;
+                    weather.wmo = location.info.wmo;
+                    weather.location_name = location.info.name;
+                    weather.region = location.info.region;
 
-                var loc = {};
+                    db.save(weather, "Weather", function(err, node) {
+                        if(err) {
+                            console.error("Error in adding Weather node!");
+                            console.error(err);
+                        }
 
-                // We only want the values from location.info into the Location node
-                var infoArr = Object.keys(location.info);
-                infoArr.forEach(function(info) {
-                    if (location.info.hasOwnProperty(info)) {
-                        loc[info] = location.info[info];
-                    }
+                        console.log("Created node: " + node);
+                    });
                 });
-
-                // Ignore locations without an id (they don't adhere to our constraint)
-                if (loc.id) {
-                    // Create a constraint on Location's ID
-                    db.constraints.uniqueness.createIfNone("Location", "id", function(err, constraint) {
-                        console.info("Constraint created/updated for: " + constraint);
-                    });
-
-                    // Create/update Location node for this ID
-                    db.save(loc, "Location", function(err, node) {
-                        console.info("Node created/updated: " + node);
-                    });
-                }
             });
         }
     });
