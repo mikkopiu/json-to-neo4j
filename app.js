@@ -7,8 +7,8 @@ var RELATIVE_FILE_LOCATION = process.argv[2];
 // Database settings
 var DB_URL = "http://localhost";
 var DB_PORT = "7474";
-var DB_USER = "neo4j";
-var DB_PASS = "asd123";
+var DB_USER = "myuser";
+var DB_PASS = "mypass";
 
 // Create DB connection
 var db = seraph({
